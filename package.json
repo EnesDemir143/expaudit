@@ -41,7 +41,8 @@
     "test:watch": "vitest",
     "lint": "tsc -p tsconfig.json --noEmit",
     "validate-skill": "tsx src/cli.ts validate-skill",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "pretest": "npm run build"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",
