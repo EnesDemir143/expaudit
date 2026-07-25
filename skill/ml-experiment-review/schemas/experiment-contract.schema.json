@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["identity", "hypothesis", "baseline", "intendedChange", "data", "evaluation", "acceptance", "implementation", "reproducibility"],
+  "properties": {
+    "identity": { "$ref": "#/$defs/field" }, "hypothesis": { "$ref": "#/$defs/field" }, "baseline": { "$ref": "#/$defs/field" }, "intendedChange": { "$ref": "#/$defs/field" }, "data": { "$ref": "#/$defs/field" }, "evaluation": { "$ref": "#/$defs/field" }, "acceptance": { "$ref": "#/$defs/field" }, "implementation": { "$ref": "#/$defs/field" }, "reproducibility": { "$ref": "#/$defs/field" }
+  },
+  "$defs": { "field": { "type": "object", "required": ["state", "source", "confidence", "evidence"], "properties": { "state": { "enum": ["declared", "observed", "inferred", "missing", "conflicting"] }, "source": { "enum": ["experiment-md", "chat-declared", "repository-inferred", "run-artifact", "mixed"] }, "confidence": { "enum": ["high", "medium", "low"] }, "evidence": { "type": "array" } } } }
+}
