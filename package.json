@@ -1,6 +1,6 @@
 {
   "name": "expaudit-cli",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Evidence-backed ML experiment review CLI",
   "keywords": [
     "agent-skills",
@@ -27,8 +27,14 @@
   "bin": {
     "expaudit": "dist/cli.js"
   },
-  "files": ["dist", "skill", "review-policy.yaml"],
-  "engines": { "node": ">=20" },
+  "files": [
+    "dist",
+    "skill",
+    "review-policy.yaml"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
