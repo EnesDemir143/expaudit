@@ -2,6 +2,17 @@
 
 All notable changes to ExpAudit are documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- Project roadmap, issue workflow, and implementation plans for planned v0.3-v0.5 audit capabilities.
+- Contributor, code-of-conduct, security, and support guidance.
+
+### Changed
+
+- MIT copyright notice now identifies Enes Demir as the 2026 copyright holder.
+
 ## [0.1.2] - 2026-07-25
 
 ### Fixed
@@ -20,6 +31,6 @@ All notable changes to ExpAudit are documented in this file.
 
 - Evidence-backed ML experiment review engine with a shared request, contract, finding, coverage, and verdict model.
 - Read-only chat and repository-health reviews, persistent sibling Markdown reviews, comparisons, JSON, and SARIF output.
-- Static checks for leakage, evaluation misuse, loss misuse, LLM masking, tokenizer revisions, and train-serving skew.
+- Static checks for leakage, evaluation misuse, loss misuse, and train-serving skew.
 - `expaudit` CLI with Claude Code, OpenCode, Antigravity, Kilo, and generic Agent Skills installation targets.
 - Canonical `ml-experiment-review` Agent Skill and GitHub Actions validation.
