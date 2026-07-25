@@ -1,6 +1,6 @@
 {
   "name": "expaudit-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Evidence-backed ML experiment review CLI",
   "keywords": [
     "agent-skills",
@@ -20,6 +20,9 @@
     "url": "https://github.com/EnesDemir143/expaudit/issues"
   },
   "homepage": "https://github.com/EnesDemir143/expaudit#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "bin": {
     "expaudit": "dist/cli.js"

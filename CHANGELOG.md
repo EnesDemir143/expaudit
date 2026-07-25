@@ -2,6 +2,12 @@
 
 All notable changes to ExpAudit are documented in this file.
 
+## [0.1.1] - 2026-07-25
+
+### Changed
+
+- Release workflow now publishes public npm packages through GitHub Actions OIDC Trusted Publishing.
+
 ## [0.1.0] - 2026-07-25
 
 ### Added
