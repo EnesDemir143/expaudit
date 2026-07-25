@@ -1,0 +1,40 @@
+{
+  "name": "expaudit-cli",
+  "version": "0.1.0",
+  "description": "Evidence-backed ML experiment review CLI",
+  "keywords": [
+    "agent-skills",
+    "ml-experiment-review",
+    "machine-learning",
+    "experiment-tracking",
+    "reproducibility",
+    "expaudit"
+  ],
+  "license": "MIT",
+  "private": false,
+  "type": "module",
+  "bin": {
+    "expaudit": "dist/cli.js"
+  },
+  "files": ["dist", "skill", "review-policy.yaml"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "validate-skill": "tsx src/cli.ts validate-skill",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "commander": "^13.1.0",
+    "yaml": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}

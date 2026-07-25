@@ -1,0 +1,5 @@
+requiredChecks:
+  pre_run: [contract-completeness, code-config, leakage-split, tensor-training, evaluation, robustness, literature]
+  post_run: [contract-completeness, code-config, leakage-split, tensor-training, evaluation, results-statistics, robustness, literature]
+  comparison: [contract-completeness, code-config, leakage-split, tensor-training, evaluation, results-statistics]
+  repository_health: [contract-completeness, code-config, leakage-split, tensor-training, evaluation]
