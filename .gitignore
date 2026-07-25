@@ -17,3 +17,4 @@ pnpm-debug.log*
 !.env.example
 *.review.md
 *.comparison.md
+.codegraph/
