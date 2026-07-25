@@ -12,6 +12,14 @@
   ],
   "license": "MIT",
   "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EnesDemir143/expaudit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/EnesDemir143/expaudit/issues"
+  },
+  "homepage": "https://github.com/EnesDemir143/expaudit#readme",
   "type": "module",
   "bin": {
     "expaudit": "dist/cli.js"
