@@ -27,4 +27,9 @@ describe('static checks', () => {
     const findings = await fixture('X_train, X_test = train_test_split(X)\nscaler = StandardScaler()\nscaler.fit(X_train)\ncriterion = BCEWithLogitsLoss()\nloss = criterion(logits, labels)');
     expect(findings.filter((finding) => finding.severity === 'critical')).toEqual([]);
   });
+
+  it('does not turn commented-out leakage code into a confirmed defect', async () => {
+    const findings = await fixture('# scaler = StandardScaler()\n# scaler.fit(X)\nX_train, X_test = train_test_split(X)');
+    expect(findings).not.toEqual(expect.arrayContaining([expect.objectContaining({ id: 'split-scaler-before-split' })]));
+  });
 });

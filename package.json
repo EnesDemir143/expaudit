@@ -36,7 +36,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc -p tsconfig.json --noEmit",
@@ -44,6 +44,8 @@
     "prepack": "npm run build"
   },
   "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "@lezer/python": "^1.1.19",
     "ajv": "^8.17.1",
     "commander": "^13.1.0",
     "yaml": "^2.7.0"

@@ -9,7 +9,7 @@ export function requiresConsent(plan: ToolPlan, granted: Capability[]): Finding 
 
 export const capabilityRegistry: Record<Capability, { mutation: boolean; description: string }> = {
   write: { mutation: true, description: 'Create persistent reports or evidence.' },
-  network: { mutation: false, description: 'Access literature or official documentation.' },
+  network: { mutation: false, description: 'Access remote dependency advisories or tracker services.' },
   runtime: { mutation: false, description: 'Run bounded isolated runtime probes.' },
   install: { mutation: true, description: 'Create an isolated tool environment; never mutate project dependencies.' },
   gpu: { mutation: false, description: 'Use GPU for an explicitly approved runtime probe.' },

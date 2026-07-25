@@ -1,9 +1,9 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
-import type { ExperimentContract, Finding, ReviewScope, ReviewVerdict } from './types.js';
+import type { AdapterResult, ExperimentContract, Finding, ReviewScope, ReviewVerdict } from './types.js';
 import { missingFields } from './contract.js';
 
-export interface ReviewReport { scope: ReviewScope; contract: ExperimentContract; findings: Finding[]; verdict: ReviewVerdict; evidencePath?: string; }
+export interface ReviewReport { scope: ReviewScope; contract: ExperimentContract; findings: Finding[]; adapters: AdapterResult[]; observed?: Partial<ExperimentContract>; verdict: ReviewVerdict; evidencePath?: string; }
 const generatedStart = '<!-- expaudit:generated:start -->';
 const generatedEnd = '<!-- expaudit:generated:end -->';
 const priority = (finding: Finding): number => ({ critical: 0, high: 1, medium: 2, low: 3, info: 4 })[finding.severity];
@@ -14,12 +14,12 @@ export function renderChat(report: ReviewReport): string {
   const findings = [...report.findings].sort((a, b) => priority(a) - priority(b)).slice(0, 7);
   return [
     `ExpAudit scope: source=${report.scope.source}, stage=${report.scope.stage}, target=chat, depth=${report.scope.depth}.`,
-    `Contract source: ${report.contract.identity.state} (${report.contract.identity.source}); confidence: ${report.contract.identity.confidence}.`,
+    `Manifest contract: ${report.contract.identity.state} (${report.contract.identity.source}); confidence: ${report.contract.identity.confidence}.`,
     missing.length ? `Missing contract fields: ${missing.join(', ')}.` : 'Missing contract fields: none.',
     findings.length ? `Findings:\n${findings.map(formatFinding).join('\n')}` : 'Findings: no issues detected by completed checks.',
     `Verdict: **${report.verdict.value}**. ${report.verdict.rationale}`,
     `Coverage: completed ${report.verdict.coverage.completed.length}/${report.verdict.coverage.required.length}; unavailable: ${report.verdict.coverage.unavailable.join(', ') || 'none'}.`,
-    'Lowest-cost next step: provide the exact split policy, primary selection metric, and final test usage policy for verification.',
+    'Lowest-cost next step: resolve unavailable required manifest paths and address ordered critical/high findings.',
   ].join('\n\n');
 }
 
@@ -33,15 +33,14 @@ export function renderReviewMarkdown(report: ReviewReport): string {
     generatedStart,
     '# ExpAudit Review',
     `## Executive Summary\nVerdict: **${report.verdict.value}**. ${report.verdict.rationale}`,
-    `## Resolved Scope\n- Source: \`${report.scope.source}\`\n- Stage: \`${report.scope.stage}\`\n- Target: \`${report.scope.target}\`\n- Depth: \`${report.scope.depth}\``,
+    `## Resolved Scope\n- Source: \`${report.scope.source}\`\n- Stage: \`${report.scope.stage}\`\n- Target: \`${report.scope.target}\`\n- Depth: \`${report.scope.depth}\`\n${(report.scope.resolutions ?? []).map((item) => `- ${item.kind}: \`${item.declared}\` -> \`${item.path ?? item.state}\` (${item.state}${item.score ? `, score ${item.score}` : ''})`).join('\n') || '- Paths: not resolved'}`,
     `## Contract\n- State/source: \`${report.contract.identity.state}/${report.contract.identity.source}\`\n- Confidence: \`${report.contract.identity.confidence}\`\n- Missing: ${missing.length ? missing.join(', ') : 'none'}`,
     `## Experiment Understood\n- Hypothesis: ${report.contract.hypothesis.value ?? 'missing'}\n- Baseline: ${report.contract.baseline.value ?? 'missing'}\n- Intended change: ${report.contract.intendedChange.value?.join('; ') ?? 'missing'}`,
-    `## Evidence and Coverage\n- Completed: ${report.verdict.coverage.completed.join(', ') || 'none'}\n- Unavailable: ${report.verdict.coverage.unavailable.join(', ') || 'none'}\n- Evidence store: ${report.evidencePath ?? 'not persisted'}`,
+    `## Declared vs Observed\n| Field | Declared | Observed |\n| --- | --- | --- |\n${['data', 'evaluation', 'implementation', 'reproducibility'].map((key) => `| ${key} | ${JSON.stringify((report.contract[key as keyof ExperimentContract] as { value?: unknown }).value) ?? 'missing'} | ${JSON.stringify((report.observed?.[key as keyof ExperimentContract] as { value?: unknown } | undefined)?.value) ?? 'not observed'} |`).join('\n')}`,
+    `## Adapter Coverage\n${report.adapters.map((adapter) => `- ${adapter.adapter}: completed ${adapter.completed.join(', ') || 'none'}; unavailable ${adapter.unavailable.join(', ') || 'none'}${adapter.reason ? ` (${adapter.reason})` : ''}`).join('\n') || 'No adapters executed.'}\n- Required completed: ${report.verdict.coverage.completed.join(', ') || 'none'}\n- Required unavailable: ${report.verdict.coverage.unavailable.join(', ') || 'none'}\n- Evidence store: ${report.evidencePath ?? 'not persisted'}`,
     `## Findings\n${findingGroups || 'No findings emitted.'}`,
-    `## Declared vs Observed\nDeclared values are from the contract; observed values are emitted as evidence-backed mismatch findings.`,
     `## Data, Training, Evaluation, and Serving\nStatic checks cover data leakage, tensor/training behavior, evaluation misuse, and train-serving parity where applicable.`,
-    `## Literature and Framework Review\nNot executed unless a network capability and a source-bound research request are explicitly granted.`,
-    `## Recommended Next Action\nProvide missing contract fields, then address critical/high findings before interpreting results.`,
+    `## Recommended Next Action\nResolve required unavailable adapters, then address critical/high findings before interpreting results.`,
     `## Evidence Paths\n${report.evidencePath ?? 'No persistent evidence for this target.'}`,
     generatedEnd,
   ].join('\n\n');

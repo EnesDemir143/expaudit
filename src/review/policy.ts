@@ -4,10 +4,9 @@ import { parse as parseYaml } from 'yaml';
 import type { ReviewStage } from './types.js';
 
 const fallback: Record<ReviewStage, string[]> = {
-  pre_run: ['contract-completeness', 'code-config', 'leakage-split', 'tensor-training', 'evaluation', 'robustness', 'literature'],
-  post_run: ['contract-completeness', 'code-config', 'leakage-split', 'tensor-training', 'evaluation', 'results-statistics', 'robustness', 'literature'],
+  pre_run: ['manifest', 'code-config', 'data-quality', 'leakage-split', 'tensor-training', 'evaluation', 'dependencies'],
+  post_run: ['manifest', 'code-config', 'data-quality', 'leakage-split', 'tensor-training', 'evaluation', 'artifacts', 'dependencies'],
   comparison: ['contract-completeness', 'code-config', 'leakage-split', 'tensor-training', 'evaluation', 'results-statistics'],
-  repository_health: ['contract-completeness', 'code-config', 'leakage-split', 'tensor-training', 'evaluation'],
 };
 
 export async function requiredChecksFor(stage: ReviewStage): Promise<string[]> {
