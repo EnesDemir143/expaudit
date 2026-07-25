@@ -1,0 +1,5 @@
+{
+  "name": "expaudit-static-check-benchmark",
+  "fixtures": ["split-scaler-before-split", "group-overlap", "test-reuse", "bce-sigmoid", "crossentropy-softmax", "evaluation-mode", "llm-prompt-mask", "normalization-skew", "clean"],
+  "goal": "Confirmed findings require evidence; clean fixture must have zero critical false positives."
+}
