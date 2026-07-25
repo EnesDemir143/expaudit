@@ -2,6 +2,12 @@
 
 All notable changes to ExpAudit are documented in this file.
 
+## [0.1.2] - 2026-07-25
+
+### Fixed
+
+- CLI version output now reads the installed package version.
+
 ## [0.1.1] - 2026-07-25
 
 ### Changed

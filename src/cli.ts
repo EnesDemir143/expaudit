@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { access } from 'node:fs/promises';
+import packageJson from '../package.json' with { type: 'json' };
 import { executeReview } from './review/engine.js';
 import { platforms } from './platforms/registry.js';
 import { installSkill, uninstallSkill } from './installer/installer.js';
@@ -13,7 +14,7 @@ import { pytorchProbe } from './tools/pytorch-probe.js';
 import { trackingAdapters } from './tools/tracking.js';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const program = new Command().name('expaudit').description('ExpAudit evidence-backed ML experiment review').version('0.1.0');
+const program = new Command().name('expaudit').description('ExpAudit evidence-backed ML experiment review').version(packageJson.version);
 const rootOption = (command: Command) => command.option('--root <path>', 'repository root', process.cwd());
 for (const commandName of ['init', 'update'] as const) {
   rootOption(program.command(commandName)).option('--platform <platform>', 'target platform', 'kilo').option('--global', 'install globally').option('--force', 'replace managed or existing files').action(async (options) => {
