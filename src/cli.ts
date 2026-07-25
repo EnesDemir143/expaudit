@@ -3,14 +3,13 @@ import { Command } from 'commander';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { access } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
 import packageJson from '../package.json' with { type: 'json' };
 import { platforms } from './platforms/registry.js';
 import { installSkill, uninstallSkill } from './installer/installer.js';
 import { initExperiment } from './commands/experiment.js';
 import { validateSkill } from './commands/skill.js';
 import { capabilityRegistry } from './tools/capabilities.js';
-import { pytorchProbe } from './tools/pytorch-probe.js';
-import { trackingAdapters } from './tools/tracking.js';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const program = new Command().name('expaudit').description('ExpAudit evidence-backed ML experiment review').version(packageJson.version);
@@ -29,12 +28,14 @@ program.command('platforms').action(() => console.log(platforms.map((platform) =
 rootOption(program.command('doctor')).action(async (options) => {
   const legacy = resolve(options.root, '.kilocode'); let legacyMessage = 'not present';
   try { await access(legacy); legacyMessage = 'present; Kilo target is .kilo/skills, migrate deliberately.'; } catch { /* absent */ }
-  console.log(`ExpAudit doctor\nNode: ${process.version}\nLegacy .kilocode: ${legacyMessage}`);
+  const tools = ['uv', 'micromamba', 'mamba', 'conda', 'ruff', 'pyright', 'semgrep', 'pip-audit', 'osv-scanner', 'mlflow', 'wandb', 'dvc'];
+  const availability = tools.map((tool) => `${tool}: ${spawnSync(tool, ['--version'], { stdio: 'ignore' }).status === 0 ? 'available' : 'not detected'}`).join('\n');
+  console.log(`ExpAudit doctor\nNode: ${process.version}\nLegacy .kilocode: ${legacyMessage}\n${availability}`);
 });
 const experiment = program.command('experiment');
-experiment.command('init <path>').requiredOption('--id <id>', 'experiment ID').option('--type <type>', 'experiment type', 'generic').option('--force', 'overwrite target').action(async (path, options) => { await initExperiment(path, options.id, options.type, options.force); console.log(`Created ${path}`); });
+experiment.command('init <directory>').requiredOption('--id <id>', 'experiment ID').requiredOption('--task <task>', 'Python ML task').option('--force', 'overwrite experiment.md').action(async (directory, options) => { await initExperiment(directory, options.id, options.task, options.force); console.log(`Created ${resolve(directory, 'experiment.md')}`); });
 program.command('validate-skill').action(async () => { const result = await validateSkill(resolve(packageRoot, 'skill/ml-experiment-review')); console.log(result.valid ? 'Skill valid.' : result.errors.join('\n')); if (!result.valid) process.exitCode = 1; });
 const tools = program.command('tools');
 tools.command('list').action(() => console.log(Object.entries(capabilityRegistry).map(([name, value]) => `${name}: ${value.description}`).join('\n')));
-tools.command('doctor').option('--root <path>', 'repository root', process.cwd()).action(async (options) => { const adapters = [pytorchProbe, ...trackingAdapters]; const results = await Promise.all(adapters.map(async (adapter) => `${adapter.name}: ${(await adapter.supports({ root: resolve(options.root) })) ? 'available' : 'not detected'}`)); console.log(results.join('\n')); });
+tools.command('doctor').action(() => console.log(['uv', 'micromamba', 'mamba', 'conda', 'ruff', 'pyright', 'semgrep', 'pip-audit', 'mlflow', 'wandb', 'dvc'].map((tool) => `${tool}: ${spawnSync(tool, ['--version'], { stdio: 'ignore' }).status === 0 ? 'available' : 'not detected'}`).join('\n')));
 program.parseAsync().catch((error: Error) => { console.error(`ExpAudit error: ${error.message}`); process.exitCode = 1; });

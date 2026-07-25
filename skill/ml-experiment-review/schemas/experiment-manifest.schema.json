@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ExpAudit Python ML Experiment Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "status", "task", "entrypoint", "config", "data", "evaluation", "artifacts", "serving", "baseline", "reproducibility", "runtime", "audit"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["planned", "completed"] },
+    "task": { "enum": ["tabular-classification", "tabular-regression", "image-classification", "object-detection", "image-segmentation", "time-series", "other-python-ml"] },
+    "entrypoint": { "type": "string", "minLength": 1 },
+    "config": { "type": ["string", "null"] },
+    "data": {
+      "type": "object", "additionalProperties": false, "required": ["manifest", "splitPolicy", "version", "groupColumn"],
+      "properties": { "manifest": { "type": "string", "minLength": 1 }, "splitPolicy": { "type": "string", "minLength": 1 }, "version": { "type": ["string", "null"] }, "groupColumn": { "type": ["string", "null"] } }
+    },
+    "evaluation": {
+      "type": "object", "additionalProperties": false, "required": ["primaryMetric", "selectionPolicy", "testPolicy"],
+      "properties": { "primaryMetric": { "type": "string", "minLength": 1 }, "selectionPolicy": { "type": "string", "minLength": 1 }, "testPolicy": { "type": "string", "minLength": 1 } }
+    },
+    "artifacts": {
+      "type": "object", "additionalProperties": false, "required": ["metrics", "checkpoint", "tracker"],
+      "properties": { "metrics": { "type": ["string", "null"] }, "checkpoint": { "type": ["string", "null"] }, "tracker": { "enum": ["mlflow", "wandb", "dvc", "none", null] } }
+    },
+    "serving": {
+      "anyOf": [
+        { "type": "null" },
+        { "type": "object", "additionalProperties": false, "required": ["entrypoint", "config"], "properties": { "entrypoint": { "type": "string", "minLength": 1 }, "config": { "type": ["string", "null"] } } }
+      ]
+    },
+    "baseline": { "type": ["string", "null"] },
+    "reproducibility": {
+      "type": "object", "additionalProperties": false, "required": ["seed", "commit", "environment"],
+      "properties": { "seed": { "type": ["number", "null"] }, "commit": { "type": ["string", "null"] }, "environment": { "type": ["string", "null"] } }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false, "required": ["enabled", "module", "factory", "sampleInput", "dependencies", "timeoutSeconds", "memoryMb", "useGpu"],
+      "properties": { "enabled": { "type": "boolean" }, "module": { "type": ["string", "null"] }, "factory": { "type": ["string", "null"] }, "sampleInput": { "type": ["string", "null"] }, "dependencies": { "type": ["string", "null"] }, "timeoutSeconds": { "type": ["number", "null"], "minimum": 1, "maximum": 300 }, "memoryMb": { "type": ["number", "null"], "minimum": 64, "maximum": 16384 }, "useGpu": { "type": "boolean" } }
+    },
+    "audit": {
+      "type": "object", "additionalProperties": false, "required": ["required", "optional"],
+      "properties": { "required": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }, "optional": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true } }
+    }
+  },
+  "allOf": [
+    { "if": { "properties": { "status": { "const": "completed" } } }, "then": { "properties": { "artifacts": { "properties": { "metrics": { "type": "string", "minLength": 1 }, "checkpoint": { "type": "string", "minLength": 1 } } } } } },
+    { "if": { "properties": { "status": { "const": "planned" } } }, "then": { "properties": { "artifacts": { "properties": { "metrics": { "type": "null" }, "checkpoint": { "type": "null" } } } } } },
+    { "if": { "properties": { "runtime": { "properties": { "enabled": { "const": true } } } } }, "then": { "properties": { "runtime": { "properties": { "module": { "type": "string", "minLength": 1 }, "factory": { "type": "string", "minLength": 1 }, "sampleInput": { "type": "string", "minLength": 1 }, "dependencies": { "type": "string", "minLength": 1 }, "timeoutSeconds": { "type": "number" }, "memoryMb": { "type": "number" } } } } } }
+  ]
+}

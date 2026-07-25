@@ -8,7 +8,8 @@ export async function validateSkill(skillRoot: string): Promise<{ valid: boolean
     if (!/name:\s*ml-experiment-review/.test(content)) errors.push('Skill name must be ml-experiment-review.');
     if (content.split('\n').length > 500) errors.push('SKILL.md exceeds 500 lines.');
     if (content.trim().split(/\s+/).length > 5000) errors.push('SKILL.md exceeds 5000 words.');
-    for (const reference of ['workflow.md', 'evidence-policy.md', 'review-taxonomy.md', 'research-policy.md']) await stat(join(skillRoot, 'references', reference));
+    for (const reference of ['workflow.md', 'manifest.md', 'evidence-policy.md', 'adapters.md', 'environment-isolation.md']) await stat(join(skillRoot, 'references', reference));
+    await stat(join(skillRoot, 'schemas', 'experiment-manifest.schema.json'));
   } catch (error: unknown) { errors.push((error as Error).message); }
   return { valid: errors.length === 0, errors };
 }

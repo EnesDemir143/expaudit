@@ -34,6 +34,9 @@ export async function installSkill(options: { packageRoot: string; root: string;
   }
   await mkdir(destinationBase, { recursive: true });
   await cp(source, destination, { recursive: true, force: true });
+  // The installed skill executes this internal runtime relative to SKILL.md.
+  await cp(join(options.packageRoot, 'dist'), join(destination, 'runtime'), { recursive: true, force: true });
+  await cp(join(options.packageRoot, 'review-policy.yaml'), join(destination, 'review-policy.yaml'), { force: true });
   const files = await filesAt(destination);
   const manifest: InstallManifest = { version: 1, platform: options.platform, files: await Promise.all(files.map(async (path) => ({ path: relative(manifestRoot, path), hash: hash(await readFile(path)) }))) };
   await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
