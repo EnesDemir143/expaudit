@@ -1,6 +1,6 @@
 {
   "name": "expaudit-cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Evidence-backed ML experiment review CLI",
   "keywords": [
     "agent-skills",

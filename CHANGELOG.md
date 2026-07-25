@@ -2,10 +2,13 @@
 
 All notable changes to ExpAudit are documented in this file.
 
-## [Unreleased]
+## [0.2.1] - 2026-07-26
 
 ### Added
 
+- Strict versioned `experiment.md` manifests, path resolution, observed-evidence extraction, and declared-versus-observed reporting.
+- Static Python ML checks, local artifact/tracker evidence, optional adapter selection, and isolated runtime probe support.
+- Bundled internal skill runner and strict experiment template generation.
 - Project roadmap, issue workflow, and implementation plans for planned v0.3-v0.5 audit capabilities.
 - Contributor, code-of-conduct, security, and support guidance.
 
