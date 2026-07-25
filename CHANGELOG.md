@@ -2,6 +2,12 @@
 
 All notable changes to ExpAudit are documented in this file.
 
+## [0.2.2] - 2026-07-26
+
+### Fixed
+
+- Build runner assets before integration tests so clean CI and release checkouts can validate skill installation.
+
 ## [0.2.1] - 2026-07-26
 
 ### Added
